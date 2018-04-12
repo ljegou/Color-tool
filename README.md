@@ -16,6 +16,7 @@ An online tool to analyse color proportions and relations in raster images:
 
 ## [Online interactive demo](http://www.geotests.net/couleurs/v2/)
 ## [Python version also available](https://github.com/ljegou/PyColorTool)
+## [Blog with further description and examples of use (in french)](https://couleurs.hypotheses.org/)
 
 ## Ressources used
 * [Three.js](http://threejs.org/)
