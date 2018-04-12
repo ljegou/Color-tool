@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Color relations and proportions of an image</title>
+	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'/>
+	<script type="text/javascript" src="js/three/three.min.js"></script>
+	<script type="text/javascript" src="js/three/Detector.js"></script>
+	<script type="text/javascript" src="js/three/OrbitControls.js"></script>
+	<script type="text/javascript" src="js/three/TrackballControls.js"></script>
+	<script type="text/javascript" src="js/jscolor/jscolor.js"></script>
+	<script type="text/javascript" src="js/colorist2.js"></script>
+	<script type="text/javascript" src="js/canvas2svg.js"></script>
+	<script type="text/javascript" src="js/canvg-1.3/rgbcolor.js"></script>
+	<!-- <script type="text/javascript" src="js/canvg-1.3/StackBlur.js"></script> -->
+	<script type="text/javascript" src="js/canvg-1.3/canvg.js"></script>
+	<script type="text/javascript" src="js/dat.gui.min.js"></script>
+	<link href="frequs_nt.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+	<h1 id="title">Color relations and proportions of an image</h1>
+	<h2 id="subtitle">An analysis and synthetic representation experiment</h2>
+	<p><a id="langue" href="frequs_nt.html?l=fr">Version française</a></p>
+	<div class='panneau'>
+		<table>
+			<tr><td>
+				<div id="imageContainer">
+					<a href="#" class="tooltip">
+						<img id="myImg" src="./images/af_SC521.jpg" alt="Double dégradé">
+						<span id="clicktoexpand">Click to expand</span>
+						<canvas id="myImgCanvas" style="z-index: 2; position: absolute; left: 19px;" onCLick="canvasClick();">Your browser is not HTML5 compatible (canvas).</canvas>
+					</a>
+				</div>
+			</td><td>
+				<a href="#" class="tooltip">
+					<div id="ThreeJS"></div>
+					<!--<canvas class="thumb" id="histogram" width="800" height="800">Your browser is not HTML5 compatible (canvas).</canvas>
+					<span>Click to expand or rotate the 3D cylinder</span>-->
+					<div id="svg"></div>
+				</a>
+			</td><td style = "vertical-align: top;">
+				<p><div id="vhist"></div></p>
+				<p><a id="svgPaletteLink" href="#">Sv. palette</a></p>
+			</td></tr>
+		</table>
+	</div>
+	<div class='panneau'>
+		<form action="#">
+				<legend id="lp1">1- Image to analyze</legend>
+				<label id="selectanimage">Select an image: </label><select id="imgSelector">
+					<option value="./images/carte.jpg" id="multicolormap">Multicolor map</option>
+					<option selected="selected" value="./images/af_SC521.jpg" id="dualgradient">Dual gradient</option>
+					<option value="./images/af_SC752.jpg" id="typology">Typology</option>
+					<option value="./images/af_SC4211.jpg" id="yggradient">Yellow-green gradient</option>
+					<option value="./images/af_SC371.jpg" id="complementary">Complementary colors symbols</option>
+					<option value="./images/all16777216rgb.png" id="allrgb">All RGB colors</option>
+					<option value="./images/lagonbleu.jpg" id="bluelagoon">Blue lagoon</option>
+					<option value="./images/ste_victoire4.jpg" id="cezanne">C&eacute;zanne</option>
+					<option value="./images/van_gogh2.jpg" id="vangogh">Van Gogh</option>
+				</select>
+				<label id="loadalocalimage">or load a local image :</label><span><input type="file" id="files" name="files[]" multiple /></span>
+		</form>
+	</div>
+	<form action="#">
+		<div class='panneau'>
+			<legend id="lp2">2- Parameters</legend>
+			<table>
+				<tr>
+					<td><label id="sampling">Image sampling step :</label></td>
+					<td><input id="imre" type="number" min="1" max="1000" value="100" size="4"/></td>
+					<td><input id="pimre" type="button" value="+" onClick="plusN(this, 1);updateHist(rType);"/><input id="mimre" type="button" value="-" onClick="moinsN(this, 1);updateHist(rType);"/></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="maincolor">Main colors to exclude :</label></td>
+					<td><input id="nbpc" type="number" min="0" max="10" value="1" size="1"/></td>
+					<td><input id="pnbpc" type="button" value="+" onClick="plusN(this, 1);updateHist(rType);"/><input id="mnbpc" type="button" value="-" onClick="moinsN(this, 1);updateHist(rType);"/></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="lumin">Luminosity min:</label></td>
+					<td><input id="lmin" type="number" min="0" max="255" value="0" size="1"/></td>
+					<td><input id="plmin" type="button" value="+" onClick="plusN(this, 1);updateHist(rType);"/><input id="mlmin" type="button" value="-" onClick="moinsN(this, 1);updateHist(rType);"/></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="circlecontour">Circle contour:</label></td>
+					<td><input id="cb" type="checkbox" value="" onClick="updateHist(rType);"/></td>
+				</tr>
+				<tr>
+					<td><label id="threshold">Threshold of color difference :</label></td>
+					<td><input id="tyd" type="number" min="0.01" max="256" value="20" size="4"/></td>
+					<td><input id="ptyd" type="button" value="+" onClick="plusN(this, 1);updateHist(rType);"/><input id="mtyd" type="button" value="-" onClick="moinsN(this, 1);updateHist(rType);"/></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="wcolorspace">Working color space :</label></td>
+					<td>
+						<form>
+						<select id="colorspaceselect" name="colorspace" onchange="updateHist(rType);">
+							<option value="YUV" selected >YUV</option>
+							<option value="HSL">HSL</option>
+							<option value="CIELAB">CIE L*a*b*</option>
+							<option value="CIELUV">CIE L*u*v*</option>
+						</select >
+						</form>
+					</td>
+					<td></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="lumax">Luminosity max:</label></td>
+					<td><input id="lmax" type="number" min="0" max="255" value="255" size="1"/></td>
+					<td><input id="plmax" type="button" value="+" onClick="plusN(this, 1);updateHist(rType);"/><input id="mlmax" type="button" value="-" onClick="moinsN(this, 1);updateHist(rType);"/></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="axislabels">Axis labels:</label></td>
+					<td><input id="ld" type="checkbox" value="" checked = "true" onClick="updateHist(rType);"/></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+	</div>
+	<div class='panneau'>
+		<legend id="lp3">3- Type of representation</legend>
+			<table>
+				<tr>
+					<td><label id="symbolsize">Symbol size :</label></td>
+					<td><input id="zcc" type="number" min="1" max="4000" value="100" size="2"/></td>
+					<td><input id="pzcc" type="button" value="+" onClick="plusN(this, 10);updateHist(rType);"/><input id="mzcc" type="button" value="-" onClick="moinsN(this, 10);updateHist(rType);"/></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="axisorient">2D Axes</label>
+						<form action="#">
+							<input type="radio" id="circletypehsl" name="circletype" value="t1" checked="true" onClick="updateHist(rType);"/><label >HSL</label></br>
+							<input type="radio" id="circletypehls" name="circletype" value="t2" onClick="updateHist(rType);"/><label>HLS</label></br>
+						</form>
+					</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="analysistype">Type of analysis</label></br>
+						<form action="#">
+							<input type="radio" id="antypewi" name="antyperb" value="wholeImage" checked="true" onClick="updateHist(rType);"/><label id="wholeimage">Whole image</label></br>
+							<input type="radio" id="antypeln" name="antyperb" value="line" onClick="updateHist(rType);"/><label id="ontheline">Line (two clicks)</label></br>
+						</form>
+					</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="maincolortype">Main grp color</label></br>
+						<form action="#">
+							<input type="radio" id="mgcavg" name="mcgrb" value="average" checked="true" onClick="updateHist(rType);"/><label id="average">Average</label></br>
+							<input type="radio" id="mgcmed" name="mcgrb" value="median" onClick="updateHist(rType);"/><label id="median">Median</label></br>
+						</form>
+					</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><label id="symbopacity">Symb. opacity :</label></br>
+						<input id="so" type="number" min="0.1" max="4" value="1" size="2"/></br>
+						<input id="pso" type="button" value="+" onClick="plusN(this, 0.1);updateHist(rType);"/><input id="mso" type="button" value="-" onClick="moinsN(this, 0.1);updateHist(rType);"/>
+					</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>
+						<div class="buttonwrapper">
+							<a href="#ce" class="ovalbutton" onClick="axes='hls'; cc3d=false; updateHist('CC');"><span><b id="drawcc">Chromatic Circle</b></span></a>
+							<a href="#cy" class="ovalbutton" onClick="cc3d=true; updateHist('CC3D');"><span><b id="drawcc3d">Chromatic Cylinder</b></span></a>
+						</div>
+					</td>
+				</tr>
+			</table>
+	</div>
+	<div class='panneau'>
+		<legend id="lp4">4- Color replacement</legend>
+		<input id="choosecolor" type="button" class="" value="Choose color group" onClick="clickOnVisu();"/>
+		<input id="colorpick" class="color"/><input id="replacecolor" type="button" value="Replace color" onClick="replaceColor();"/><br />
+	</div>
+	<div class='panneau' id="p5">
+		<legend id="lp5">5- Export</legend>
+		<a href="#" id="svgPNG" onClick="svgImg();"><label id="createPNG">Create PNG</label></a>
+		<a href="#" id="svgSVG"><label id="createSVG">Create SVG</label></a>
+		<canvas id="canvas2" width="1" height="1">Your browser don't support HTML5 (canvas).</canvas>
+		<canvas id="canvasImg" width="1" height="1">Your browser don't support HTML5 (canvas).</canvas>
+	</div>
+	<br/>
+	<p id="runtime"></p>
+	<p>
+		<label id="author">Author: </label><a href="http://couleurs.hypotheses.org">L. J&eacute;gou</a>, Universit&eacute; Toulouse-2 Jean Jaur&egrave;s, D&eacute;pt. de G&eacute;ographie,-2014, version du 23/12/14.<br/>
+		<label id="libraries">Libraries: </label><a href="http://threejs.org/">Three.js</a> <a href="https://code.google.com/p/dat-gui/">DAT-GUI</a> <a href="http://jscolor.com">JSColor picker</a> <a href="http://code.google.com/p/canvg/">Canvg</a> <a href="http://www.phpied.com/rgb-color-parser-in-javascript/">RGBColor</a><br>
+		<label id="licence">Licence: </label><a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en">Creative Commons Attribution 3.0 Unported License</a>
+	</p>
+	<script type="text/javascript" src="./js/frequs_nt.js"></script>
+	<!-- <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	  ga('create', 'UA-42695418-1', 'geotests.net');
+	  ga('send', 'pageview');
+	</script> -->
+</body>
+</html>

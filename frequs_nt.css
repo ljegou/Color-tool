@@ -1,0 +1,129 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #DDDDDD;
+    margin: 10px;
+}
+p {
+    text-align: justify; color: #000; font-size: 0.70em; line-height: 1.25em;
+}
+li {
+    text-decoration: none; list-style-type: none; display: block; color: #fff;
+}
+h1 {
+    font-family: Montserrat, sans-serif;
+    font-size: 24px; font-weight: 800;
+    text-align: center;
+}
+
+h2 {
+    font-family: Montserrat, sans-serif;
+    font-size: 18px; font-weight: 800;
+    text-align: center;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+label {
+    font-size: 12px;
+}
+
+fieldset {
+    border-style: none;
+    border: 1px solid #DDDDDD;
+}
+
+a.tooltip span {display:none; padding:2px 3px; margin-left:8px; width:130px;}
+a.tooltip:hover span{display:block; position:absolute; z-index: 24; background:#ffffff; border:1px solid #cccccc; color:#6c6c6c;}
+
+a.ovalbutton{
+    background: transparent url('boutons/oval-gray-left.gif') no-repeat top left;
+    display: block;
+    float: left;
+    font: normal 12px Tahoma;
+    line-height: 16px;
+    height: 24px;
+    padding-left: 11px;
+    text-decoration: none;
+}
+
+a:link.ovalbutton, a:visited.ovalbutton, a:active.ovalbutton{
+    color: #494949;
+}
+
+a.ovalbutton span{
+    background: transparent url('boutons/oval-gray-right.gif') no-repeat top right;
+    display: block;
+    padding: 4px 11px 4px 0;
+}
+
+a.ovalbutton:hover{
+    background-position: bottom left;
+}
+
+a.ovalbutton:hover span{
+    background-position: bottom right;
+    color: black;
+}
+
+.panneau {
+    width: 1000px;
+    background: #FFFFFF;
+    position : relative ;
+    border: rgb( 120, 120, 120) 2px solid;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    margin-left : auto;
+    margin-right : auto;
+    box-shadow: 10px 10px 5px #444444;
+    padding: 14px;
+}
+
+.buttonwrapper{
+    overflow: hidden;
+    width: 100%;
+    margin-left: 20px;
+}
+
+rect.btn {
+    stroke:#fff;
+    fill:#fff;
+    fill-opacity:0;
+    stroke-opacity:0;
+}
+
+#myImg {
+    border: 1px solid #000;
+    cursor: pointer;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+#myImg.thumb {
+    max-width: 400px;
+    max-height: 400px;
+}
+
+#myImgCanvas {
+    cursor: pointer;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+#myImgCanvas.thumb {
+    max-width: 400px;
+    max-height: 400px;
+}
+
+#vhist {
+    width: 160px;
+}
+
+#runtime {
+    clear: both
+}
